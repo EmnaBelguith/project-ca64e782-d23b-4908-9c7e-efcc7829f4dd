@@ -1,0 +1,23 @@
+# Utilise une image Node.js légère et stable
+FROM node:18-alpine
+
+# Définit le répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Copie les fichiers package.json et package-lock.json du backend
+# Le chemin "server/" est relatif au contexte de build (racine de thinkify-main)
+COPY thinkify-main/server/package*.json ./
+
+# Installe les dépendances de production uniquement pour une image plus petite
+RUN npm install --only=production
+
+# Copie le reste des fichiers du backend
+COPY thinkify-main/server/. .
+
+# Expose le port sur lequel votre application Express écoute (par défaut 3000)
+EXPOSE 3000
+
+# Commande pour démarrer l'application Express
+# Utilisez "node index.js" si votre fichier principal est index.js
+# Si votre package.json a un script "start", vous pouvez utiliser "npm start"
+CMD ["node", "index.js"]
